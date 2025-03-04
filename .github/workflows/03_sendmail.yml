@@ -1,5 +1,8 @@
 name: Send mail
-on: push
+on:
+  push:
+    paths:
+      - '.github/workflows/03_sendmail.yml'  # Monitor changes to this specific workflow file
 
 jobs:
   mail:
@@ -27,3 +30,4 @@ jobs:
         to: nboopathy02@gmail.com
         # from email name
         from: Boopathy
+
