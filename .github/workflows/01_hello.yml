@@ -1,7 +1,9 @@
-name: hello  
+name: hello
 
 on:
   push:
+    paths:
+      - '.github/workflows/01_hello.yml'  # Add the specific path to your workflow file
 
 jobs:
   hello:
@@ -12,3 +14,4 @@ jobs:
         run: |
           echo "Hello world"
           uname
+
