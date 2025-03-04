@@ -23,4 +23,4 @@ jobs:
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         # email body as text
         body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-        # comma-s
+        # comma-ss
