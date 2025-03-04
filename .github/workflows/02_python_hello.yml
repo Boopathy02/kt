@@ -2,7 +2,7 @@ name: Run Hello-world from py Script
 on:
   push:
     paths:
-      - 'hello.py'  # The workflow runs only when `hello.py` is changed
+      - '.github/workflows/02_python_hello.py'  # The workflow runs only when `hello.py` is changed
 
 jobs:
   Hello:
