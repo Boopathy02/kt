@@ -1,10 +1,5 @@
 name: Send mail
-on:
-  push:
-    branches:
-      - prudhvi
-    paths:
-      - '03_sendmail.yml'  # This ensures that the workflow only runs when this specific file is changed
+on: push
 
 jobs:
   mail:
