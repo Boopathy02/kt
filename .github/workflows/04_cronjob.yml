@@ -19,5 +19,5 @@ jobs:
         # Search 'setup-python' in the GitHub marketplace for more info
 
       - name: Run python script
-        run: python hello.py
+        run: python boo.py
 
