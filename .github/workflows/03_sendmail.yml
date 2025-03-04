@@ -10,7 +10,7 @@ jobs:
       run: echo "Hello World"
 
     - name: Send email
-      uses: devellany/send-mailer@v1.0.2
+      uses: matthewprins/send-email@v1.0.0
       with:
         host: smtp.gmail.com
         # Optional port (defaults to 465)
