@@ -10,16 +10,16 @@ jobs:
       run: echo "Hello World"
 
     - name: Sending a mail
-      if: ${{ always() }}
-      uses: devellany/send-mailer@v1.0.2
+      uses: devellany/send-mail@v1.0.2
       with:
-        host: smtp.gmail.com  # Use Gmail's SMTP server
-        port: 465             # SSL port for Gmail
-        account: ${{ secrets.ACCOUNT }}  # Account email (from secrets)
-        password: ${{ secrets.MAIL_PASSWORD }}  # Password (from secrets)
-        sender: devellany     # The name shown in the 'From' field
-        from: ${{ secrets.MAIL_ADDRESS }}  # Sender email (from secrets)
-        to: nboopathy02@example.com  # Valid recipient email
-        subject: "Mail title"  # Email subject
-        body: "Your message"  # Email body
+        host: smtp.naver.com   # SMTP server for Naver
+        port: 465              # SSL port for Naver SMTP
+        account: ${{ secrets.MAIL_ADDRESS }}  # Your email address (from secrets)
+        password: ${{ secrets.MAIL_PASSWORD }}  # Email password (from secrets)
+        sender: boopathy       # Displayed name for the sender
+        from: ${{ secrets.MAIL_ADDRESS }}  # Sender's email address (from secrets)
+        to: nboopathy02@gmail.com  # Recipient's email address
+        subject: "Github Actions job result"  # Email subject
+        body: "Your message here"  # Text to include in the email body
+        attachments: '[{"path":"README.md"}]'  # Attach the README.md file
 
