@@ -11,16 +11,15 @@ jobs:
 
     - name: Sending a mail
       if: ${{ always() }}
-      uses: ilshidur/action-send-mail@v1
+      uses: devellany/send-mailer@v1.0.2
       with:
-        host: smtp.gmail.com
-        port: 465
-        username: ${{ secrets.MAIL_ADDRESS }}
-        password: ${{ secrets.MAIL_PASSWORD }}
-        to: nboopathy02@gmail.com
-        from: ${{ secrets.MAIL_ADDRESS }}
-        subject: "Mail title"
-        body: "Your message"
-        content-type: "text/plain"
-        attachments: '[{"path":"README.md"}]'
+        host: smtp.gmail.com  # Use Gmail's SMTP server
+        port: 465             # SSL port for Gmail
+        account: ${{ secrets.ACCOUNT }}  # Account email (from secrets)
+        password: ${{ secrets.MAIL_PASSWORD }}  # Password (from secrets)
+        sender: devellany     # The name shown in the 'From' field
+        from: ${{ secrets.MAIL_ADDRESS }}  # Sender email (from secrets)
+        to: nboopathy02@example.com  # Valid recipient email
+        subject: "Mail title"  # Email subject
+        body: "Your message"  # Email body
 
