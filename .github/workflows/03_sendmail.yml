@@ -9,17 +9,16 @@ jobs:
     - name: Print Hello World
       run: echo "Hello World"
 
-    - name: Sending a mail
-      uses: devellany/send-mail@v1.0.2
+    - name: Send email
+      uses: devellany/send-mailer@v1.0.2
       with:
-        host: smtp.naver.com   # SMTP server for Naver
-        port: 465              # SSL port for Naver SMTP
-        account: ${{ secrets.MAIL_ADDRESS }}  # Your email address (from secrets)
-        password: ${{ secrets.MAIL_PASSWORD }}  # Email password (from secrets)
-        sender: boopathy       # Displayed name for the sender
-        from: ${{ secrets.MAIL_ADDRESS }}  # Sender's email address (from secrets)
-        to: nboopathy02@gmail.com  # Recipient's email address
-        subject: "Github Actions job result"  # Email subject
-        body: "Your message here"  # Text to include in the email body
-        attachments: '[{"path":"README.md"}]'  # Attach the README.md file
-
+        host: smtp.gmail.com
+        # Optional port (defaults to 465)
+        port: 587
+        account: ${{ secrets.ACCOUNT }}
+        password: ${{ secrets.MAIL_PASSWORD }}
+        sender: boopathy
+        from: ${{ secrets.MAIL_ADDRESS }}
+        to: nboopathy02@gmail.com
+        subject: mail title.
+        body: this is my test email
