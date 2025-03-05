@@ -14,7 +14,7 @@ jobs:
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1  # Change to your AWS region
+        aws-region: us-east-1  # Change this to your AWS region
 
     - name: Fetch Secrets from AWS Secrets Manager
       id: secrets
@@ -24,7 +24,7 @@ jobs:
         echo "EMAIL_USERNAME=$(echo $EMAIL_SECRET | jq -r '.EMAIL_USERNAME')" >> $GITHUB_ENV
         echo "EMAIL_PASSWORD=$(echo $EMAIL_SECRET | jq -r '.EMAIL_PASSWORD')" >> $GITHUB_ENV
       env:
-        AWS_REGION: us-east-1  # Change to your AWS region
+        AWS_REGION: us-east-1  # Change this to your AWS region
 
     - name: Debug AWS Secrets (Optional)
       run: |
@@ -42,7 +42,7 @@ jobs:
         server_port: 465
         username: ${{ env.EMAIL_USERNAME }}
         password: ${{ env.EMAIL_PASSWORD }}
-        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        subject: "GitHub Actions Job Notification"
         body: |
           GitHub Actions Job Notification:
           - Repository: ${{ github.repository }}
