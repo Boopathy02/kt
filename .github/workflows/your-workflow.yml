@@ -12,7 +12,7 @@ jobs:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        role-to-assume: arn:aws:iam::<account-id>:role/<role-name>  # Replace with your IAM role ARN
+        role-to-assume: arn:aws:iam::058264272710:role/arn:aws:iam::058264272710:user/gmail  # Replace with your IAM role ARN
         aws-region: us-east-1  # Change this to your AWS region
 
     - name: Fetch Secrets from AWS Secrets Manager
