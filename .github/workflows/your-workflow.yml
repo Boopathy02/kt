@@ -1,58 +1,44 @@
-name: Send Email Notification Using AWS Secrets Manager
-
+name: Send mail
 on:
   push:
-    branches:
-      - prudhvi  # Trigger on push to the main branch
+    paths:
+      - '.github/workflows/03_sendmail.yml'  # Monitor changes to this specific workflow file
 
 jobs:
-  notify:
+  mail:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Set up AWS CLI
+    - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        aws-region: us-east-1  # Change to your AWS region
 
-    - name: Retrieve Gmail credentials from Secrets Manager
+    - name: Fetch Secrets from AWS Secrets Manager
       id: secrets
       run: |
-        export GMAIL_CREDENTIALS=$(aws secretsmanager get-secret-value --secret-id gmail/notification-credentials --query SecretString --output text)
-        export GMAIL_EMAIL_ID=$(echo $GMAIL_CREDENTIALS | jq -r .GMAIL_EMAIL_ID)
-        export GMAIL_APP_PASSWORD=$(echo $GMAIL_CREDENTIALS | jq -r .GMAIL_APP_PASSWORD)
+        EMAIL_SECRET=$(aws secretsmanager get-secret-value --secret-id email_credentials --query SecretString --output text)
+        echo "::add-mask::$EMAIL_SECRET"
+        echo "EMAIL_USERNAME=$(echo $EMAIL_SECRET | jq -r .EMAIL_USERNAME)" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(echo $EMAIL_SECRET | jq -r .EMAIL_PASSWORD)" >> $GITHUB_ENV
+      env:
+        AWS_REGION: us-east-1  # Change to your AWS region
 
-    - name: Send email notification
-      run: |
-        python -c "
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+    - name: Print Hello World
+      run: echo "Hello World"
 
-# Gmail credentials from AWS Secrets Manager
-sender_email = '$GMAIL_EMAIL_ID'
-receiver_email = 'nboopathy02@gmail.com'  # Change this to your recipient
-password = '$GMAIL_APP_PASSWORD'
-
-# Set up the MIME
-message = MIMEMultipart()
-message['From'] = sender_email
-message['To'] = receiver_email
-message['Subject'] = 'Build Notification'
-
-# Email body
-body = 'The build was successful!'
-message.attach(MIMEText(body, 'plain'))
-
-# Connect to Gmail's SMTP server and send the email
-server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-server.login(sender_email, password)
-server.sendmail(sender_email, receiver_email, message.as_string())
-server.quit()
-"
+    - name: Send mail
+      if: always()
+      uses: dawidd6/action-send-mail@v2
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        username: ${{ env.EMAIL_USERNAME }}
+        password: ${{ env.EMAIL_PASSWORD }}
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        to: nboopathy02@gmail.com
+        from: Boopathy
 

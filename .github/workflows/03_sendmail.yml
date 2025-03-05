@@ -2,7 +2,7 @@ name: Send mail
 on:
   push:
     paths:
-      - '.github/workflows/03_sendmail.yml'  # Monitor changes to this specific workflow file
+      - '.github/workflows/03_sendmail.yml'  # Monitor changes to this specific workflow file bye
 
 jobs:
   mail:
