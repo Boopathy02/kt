@@ -21,10 +21,15 @@ jobs:
       run: |
         EMAIL_SECRET=$(aws secretsmanager get-secret-value --secret-id email_credentials --query SecretString --output text)
         echo "::add-mask::$EMAIL_SECRET"
-        echo "EMAIL_USERNAME=$(echo $EMAIL_SECRET | jq -r .EMAIL_USERNAME)" >> $GITHUB_ENV
-        echo "EMAIL_PASSWORD=$(echo $EMAIL_SECRET | jq -r .EMAIL_PASSWORD)" >> $GITHUB_ENV
+        echo "EMAIL_USERNAME=$(echo $EMAIL_SECRET | jq -r '.EMAIL_USERNAME')" >> $GITHUB_ENV
+        echo "EMAIL_PASSWORD=$(echo $EMAIL_SECRET | jq -r '.EMAIL_PASSWORD')" >> $GITHUB_ENV
       env:
         AWS_REGION: us-east-1  # Change to your AWS region
+
+    - name: Debug AWS Secrets (Optional)
+      run: |
+        echo "EMAIL_USERNAME=${{ env.EMAIL_USERNAME }}"
+        echo "EMAIL_PASSWORD=****** (masked for security)"
 
     - name: Print Hello World
       run: echo "Hello World"
@@ -38,7 +43,12 @@ jobs:
         username: ${{ env.EMAIL_USERNAME }}
         password: ${{ env.EMAIL_PASSWORD }}
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-        body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+        body: |
+          GitHub Actions Job Notification:
+          - Repository: ${{ github.repository }}
+          - Workflow: ${{ github.workflow }}
+          - Job: ${{ github.job }}
+          - Status: ${{ job.status }}
         to: nboopathy02@gmail.com
         from: Boopathy
 
