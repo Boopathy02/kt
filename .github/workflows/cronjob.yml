@@ -1,5 +1,8 @@
 name: Cronjob
 on:
+  push:
+    branches:
+      - prudhvi  # Triggers on push to the 'prudhvi' branch
   schedule:
     - cron: '* * * * *'  # Runs every minute
 
