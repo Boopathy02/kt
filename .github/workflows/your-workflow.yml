@@ -51,4 +51,3 @@ jobs:
           - Status: ${{ job.status }}
         to: nboopathy02@gmail.com
         from: Boopathy
-
