@@ -10,20 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install boto3
-
-      - name: Fetch email credentials from AWS Secrets Manager
+      # Step 2: Fetch email credentials from AWS Secrets Manager
+      - name: Fetch email credentials
         id: fetch-secrets
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -31,11 +23,14 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           SECRET_NAME: ${{ secrets.AWS_SECRET_NAME }}
         run: |
-          import os
+          # Install boto3 (AWS SDK for Python)
+          pip install boto3
+
+          # Fetch the secret from AWS Secrets Manager
           import boto3
           import json
+          import os
 
-          # Initialize AWS Secrets Manager client
           client = boto3.client(
               'secretsmanager',
               aws_access_key_id=os.environ['AWS_ACCESS_KEY_ID'],
@@ -43,30 +38,33 @@ jobs:
               region_name=os.environ['AWS_REGION']
           )
 
-          # Fetch the secret
           response = client.get_secret_value(SecretId=os.environ['SECRET_NAME'])
           secret = json.loads(response['SecretString'])
 
-          # Set outputs for the email credentials
+          # Save email credentials as environment variables
           print(f"::set-output name=EMAIL_USER::{secret['EMAIL_USER']}")
           print(f"::set-output name=EMAIL_PASSWORD::{secret['EMAIL_PASSWORD']}")
 
-      - name: Run your pipeline
+      # Step 3: Run your pipeline (replace this with your actual pipeline steps)
+      - name: Run pipeline
         run: |
           echo "Running your pipeline..."
-          # Add your pipeline steps here
-          # Example: Run tests, build, deploy, etc.
+          # Add your pipeline steps here (e.g., build, test, deploy)
 
+      # Step 4: Send success email
       - name: Send success email
         if: success()
+        env:
+          EMAIL_USER: ${{ steps.fetch-secrets.outputs.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ steps.fetch-secrets.outputs.EMAIL_PASSWORD }}
         run: |
           echo "Pipeline succeeded! Sending email..."
           python -c "
           import smtplib
           from email.mime.text import MIMEText
 
-          email_user = '${{ steps.fetch-secrets.outputs.EMAIL_USER }}'
-          email_password = '${{ steps.fetch-secrets.outputs.EMAIL_PASSWORD }}'
+          email_user = '${{ env.EMAIL_USER }}'
+          email_password = '${{ env.EMAIL_PASSWORD }}'
           recipient = email_user  # Send to yourself, or replace with another email
 
           msg = MIMEText('Your pipeline succeeded!')
@@ -79,16 +77,20 @@ jobs:
               server.sendmail(email_user, recipient, msg.as_string())
           "
 
+      # Step 5: Send failure email
       - name: Send failure email
         if: failure()
+        env:
+          EMAIL_USER: ${{ steps.fetch-secrets.outputs.EMAIL_USER }}
+          EMAIL_PASSWORD: ${{ steps.fetch-secrets.outputs.EMAIL_PASSWORD }}
         run: |
           echo "Pipeline failed! Sending email..."
           python -c "
           import smtplib
           from email.mime.text import MIMEText
 
-          email_user = '${{ steps.fetch-secrets.outputs.EMAIL_USER }}'
-          email_password = '${{ steps.fetch-secrets.outputs.EMAIL_PASSWORD }}'
+          email_user = '${{ env.EMAIL_USER }}'
+          email_password = '${{ env.EMAIL_PASSWORD }}'
           recipient = email_user  # Send to yourself, or replace with another email
 
           msg = MIMEText('Your pipeline failed!')
