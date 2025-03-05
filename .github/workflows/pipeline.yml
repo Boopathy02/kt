@@ -1,20 +1,16 @@
-name: CI/CD Pipeline with Email Notification
+name: Simple Pipeline with Email Notification
 
 on:
   push:
     branches:
-      - main
+      - prudhvi
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Step 2: Fetch email credentials from AWS Secrets Manager
+      # Step 1: Fetch email credentials from AWS Secrets Manager
       - name: Fetch email credentials
         id: fetch-secrets
         env:
@@ -45,13 +41,12 @@ jobs:
           print(f"::set-output name=EMAIL_USER::{secret['EMAIL_USER']}")
           print(f"::set-output name=EMAIL_PASSWORD::{secret['EMAIL_PASSWORD']}")
 
-      # Step 3: Run your pipeline (replace this with your actual pipeline steps)
-      - name: Run pipeline
+      # Step 2: Run a simple command
+      - name: Run Hello World
         run: |
-          echo "Running your pipeline..."
-          # Add your pipeline steps here (e.g., build, test, deploy)
+          echo "Hello, World!"
 
-      # Step 4: Send success email
+      # Step 3: Send success email
       - name: Send success email
         if: success()
         env:
@@ -65,7 +60,7 @@ jobs:
 
           email_user = '${{ env.EMAIL_USER }}'
           email_password = '${{ env.EMAIL_PASSWORD }}'
-          recipient = email_user  # Send to yourself, or replace with another email
+          recipient = nboopathy02@gmail.com  # Send to yourself, or replace with another email
 
           msg = MIMEText('Your pipeline succeeded!')
           msg['Subject'] = 'Pipeline Success'
@@ -77,7 +72,7 @@ jobs:
               server.sendmail(email_user, recipient, msg.as_string())
           "
 
-      # Step 5: Send failure email
+      # Step 4: Send failure email
       - name: Send failure email
         if: failure()
         env:
@@ -91,7 +86,7 @@ jobs:
 
           email_user = '${{ env.EMAIL_USER }}'
           email_password = '${{ env.EMAIL_PASSWORD }}'
-          recipient = email_user  # Send to yourself, or replace with another email
+          recipient = nboopathy02@gmail.com  # Send to yourself, or replace with another email
 
           msg = MIMEText('Your pipeline failed!')
           msg['Subject'] = 'Pipeline Failure'
