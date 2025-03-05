@@ -1,1 +1,22 @@
+name: Cronjob
+on:
+  schedule:
+    - cron: '* * * * *'  # Runs every minute
 
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+        # Search 'checkout' in the GitHub marketplace for more info
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+        # Search 'setup-python' in the GitHub marketplace for more info
+
+      - name: Run python script
+        run: python boo.py
