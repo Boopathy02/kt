@@ -3,7 +3,7 @@ name: Fetch Secrets from Vault
 on:
   push:
     branches:
-      - main
+      - prudhvi
 
 jobs:
   get-secrets:
