@@ -1,0 +1,58 @@
+name: Send Email Notification Using AWS Secrets Manager
+
+on:
+  push:
+    branches:
+      - prudhvi  # Trigger on push to the main branch
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Retrieve Gmail credentials from Secrets Manager
+      id: secrets
+      run: |
+        export GMAIL_CREDENTIALS=$(aws secretsmanager get-secret-value --secret-id gmail/notification-credentials --query SecretString --output text)
+        export GMAIL_EMAIL_ID=$(echo $GMAIL_CREDENTIALS | jq -r .GMAIL_EMAIL_ID)
+        export GMAIL_APP_PASSWORD=$(echo $GMAIL_CREDENTIALS | jq -r .GMAIL_APP_PASSWORD)
+
+    - name: Send email notification
+      run: |
+        python -c "
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Gmail credentials from AWS Secrets Manager
+sender_email = '$GMAIL_EMAIL_ID'
+receiver_email = 'nboopathy02@gmail.com'  # Change this to your recipient
+password = '$GMAIL_APP_PASSWORD'
+
+# Set up the MIME
+message = MIMEMultipart()
+message['From'] = sender_email
+message['To'] = receiver_email
+message['Subject'] = 'Build Notification'
+
+# Email body
+body = 'The build was successful!'
+message.attach(MIMEText(body, 'plain'))
+
+# Connect to Gmail's SMTP server and send the email
+server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+server.login(sender_email, password)
+server.sendmail(sender_email, receiver_email, message.as_string())
+server.quit()
+"
+
