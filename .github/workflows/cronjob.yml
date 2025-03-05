@@ -4,7 +4,7 @@ on:
     branches:
       - prudhvi  # Triggers on push to the 'prudhvi' branch
   schedule:
-    - cron: '* * * * *'  # Runs every minute
+    # - cron: '* * * * *'  # Runs every minute
 
 jobs:
   cron:
